@@ -72,7 +72,10 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
 
         var go = eventData.pointerCurrentRaycast.gameObject;
         if (go != null && go.tag == "Board")
+        {
+            transform.parent.GetComponent<CardHand>().RemoveCard(this);
             return;
+        }
 
         transform.localPosition = _positionPreDrag;
         _canvasGroup.blocksRaycasts = true;

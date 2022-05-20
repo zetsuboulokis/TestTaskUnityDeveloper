@@ -24,6 +24,17 @@ public class CardHand : MonoBehaviour
         _cards.Add(card);
     }
 
+    public void RemoveCard(Card card)
+    {
+        for (int i = 0; i < _cards.Count; i++)
+            if (_cards[i] == card)
+            {
+                _cards.RemoveAt(i);
+                UpdateCardsPositions();
+                break;
+            }
+    }
+
     public void PressChangeCards()
     {
         if (_isChangeCardAnimationActive || IsOpenAnimationActive)
@@ -92,5 +103,11 @@ public class CardHand : MonoBehaviour
         _isChangeCardAnimationActive = true;
         _changeCardIndex = 0;
         StartChangeNextCard();
+    }
+
+    private void UpdateCardsPositions()
+    {
+        for (int i = 0; i < _cards.Count; i++)
+            SetArcPosition(_cards.Count, i, _cards[i].transform);
     }
 }
