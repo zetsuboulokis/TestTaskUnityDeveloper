@@ -6,15 +6,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasGroup))]
 public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
 {
-    public enum ValueType
-    {
-        Attack,
-        HP,
-        Mana,
-
-        ValueTypeCount
-    }
-
     [SerializeField]
     private RawImage _art;
     [SerializeField]
@@ -32,6 +23,14 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
     private Animator _animator;
     private Vector3 _positionPreDrag;
 
+    public enum ValueType
+    {
+        Attack,
+        HP,
+        Mana,
+
+        ValueTypeCount
+    }
 
     public void Init()
     {
@@ -41,11 +40,6 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
         _animator = GetComponent<Animator>();
         _canvas = FindObjectOfType<Canvas>();
         _canvasGroup = FindObjectOfType<CanvasGroup>();
-    }
-
-    public void LoadArt()
-    {
-        StartCoroutine(Utils.Dowload.Image("https://picsum.photos/70/60", _art));
     }
 
     public void SetValue(ValueType valueType, int value)
@@ -82,5 +76,10 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
 
         transform.localPosition = _positionPreDrag;
         _canvasGroup.blocksRaycasts = true;
+    }
+
+    private void LoadArt()
+    {
+        StartCoroutine(Utils.Dowloader.LoadImage("https://picsum.photos/70/60", _art));
     }
 }

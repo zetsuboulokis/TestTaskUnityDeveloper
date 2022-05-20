@@ -19,16 +19,37 @@ public class CardHand : MonoBehaviour
 
     public bool IsOpenAnimationActive { get; private set; }
 
+    public void AddCard(Card card)
+    {
+        _cards.Add(card);
+    }
+
+    public void PressChangeCards()
+    {
+        if (_isChangeCardAnimationActive || IsOpenAnimationActive)
+            return;
+
+        StartChangeCards();
+    }
+
+    public void StartChangeNextCard()
+    {
+        if (_changeCardIndex >= _cards.Count)
+        {
+            _isChangeCardAnimationActive = false;
+            return;
+        }
+
+        int cardValueNumber = Random.Range(0, (int)Card.ValueType.ValueTypeCount);
+        int cardValue = Random.Range(-2, 10);
+        _cards[_changeCardIndex++].SetValueWithAnimation((Card.ValueType)cardValueNumber, cardValue);
+    }
+
     private void Start()
     {
         _cards = new List<Card>();
         GetComponent<CardCreator>().CreateCards();
         StartCoroutine(OpenCards());
-    }
-
-    public void AddCard(Card card)
-    {
-        _cards.Add(card);
     }
 
     private IEnumerator OpenCards()
@@ -54,7 +75,7 @@ public class CardHand : MonoBehaviour
         IsOpenAnimationActive = false;
     }
 
-    public void SetArcPosition(float cardCount, float cardNumber, Transform cardTransform)
+    private void SetArcPosition(float cardCount, float cardNumber, Transform cardTransform)
     {
         float width = _cardWidth + _distanceBetweenCards;
         float x = -width * (0.5f * (cardCount - 1) - cardNumber);
@@ -66,31 +87,10 @@ public class CardHand : MonoBehaviour
         cardTransform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
-    public void PressChangeCards()
-    {
-        if (_isChangeCardAnimationActive || IsOpenAnimationActive)
-            return;
-
-        StartChangeCards();
-    }
-
-    public void StartChangeCards()
+    private void StartChangeCards()
     {
         _isChangeCardAnimationActive = true;
         _changeCardIndex = 0;
         StartChangeNextCard();
-    }
-
-    public void StartChangeNextCard()
-    {
-        if (_changeCardIndex >= _cards.Count)
-        {
-            _isChangeCardAnimationActive = false;
-            return;
-        }
-
-        int cardValueNumber = Random.Range(0, (int)Card.ValueType.ValueTypeCount);
-        int cardValue = Random.Range(-2, 10);
-        _cards[_changeCardIndex++].SetValueWithAnimation((Card.ValueType) cardValueNumber, cardValue);
     }
 }

@@ -8,6 +8,7 @@ public class CardValue : MonoBehaviour
     private Text _text;
     private int _value;
     private float _changeValueTimeStep = 0.2f;
+
     public void Set(int value)
     {
         _value = value;

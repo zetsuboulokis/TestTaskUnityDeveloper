@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 namespace Utils
 {
-    public static class Dowload
+    public static class Dowloader
     {
-        public static IEnumerator Image(string MediaUrl, RawImage rawImage)
+        public static IEnumerator LoadImage(string MediaUrl, RawImage rawImage)
         {
             UnityWebRequest request = UnityWebRequestTexture.GetTexture(MediaUrl);
             yield return request.SendWebRequest();
