@@ -57,7 +57,7 @@ public class CardHand : MonoBehaviour
     public void SetArcPosition(float cardCount, float cardNumber, Transform cardTransform)
     {
         float width = _cardWidth + _distanceBetweenCards;
-        float x = _cardWidth * 0.5f - width * (0.5f * cardCount - cardNumber);
+        float x = -width * (0.5f * (cardCount - 1) - cardNumber);
         float positionFactor = (cardCount - 1) * 0.5f - cardNumber;
         float y = _cardsMaxHeight - positionFactor * positionFactor * _cardArcHeightStep;
         float angle = positionFactor * _cardArcAngleStep;
