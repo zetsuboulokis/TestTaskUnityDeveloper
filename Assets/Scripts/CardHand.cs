@@ -78,7 +78,7 @@ public class CardHand : MonoBehaviour
                 positionFactor = time/_openAnimationTime;
 
             for (int i = 0; i < _cards.Count; i++)
-                SetArcPosition(_cards.Count * positionFactor, i * positionFactor, _cards[i].transform);
+                SetArcPosition(1 + (_cards.Count - 1) * positionFactor, i * positionFactor, _cards[i].transform);
 
             yield return null;
         }
