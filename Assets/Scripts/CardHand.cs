@@ -86,8 +86,9 @@ public class CardHand : MonoBehaviour
         if (_cardsToChange.Count == 0)
             return;
 
-        _cardsToChange[0].OnValueChangeAnimationFinish += ClearAndStartChangeNextCard;
-        _cardsToChange[0].SetRandomValueWithAnimation();
+        var card = _cardsToChange[0];
+        card.OnValueChangeAnimationFinish += ClearAndStartChangeNextCard;
+        card.SetRandomValueWithAnimation();
     }
 
     private void UpdateCardsPositions()
