@@ -6,16 +6,11 @@ using UnityEngine;
 public class CardHand : MonoBehaviour
 {
     private List<Card> _cards;
+    private List<Card> _cardsToChange;
 
-    private float _cardWidth = 80;
-    private float _cardsMaxHeight = 140;
-    private float _cardArcHeightStep = 10;
-    private float _cardArcAngleStep = 10;
-    private float _distanceBetweenCards = 13;
     private float _openAnimationTime = 1;
 
-    private int _changeCardIndex;
-    private bool _isChangeCardAnimationActive;
+    private ICardPositionPattern _cardPositionPattern = new CardPositionArc();
 
     public bool IsOpenAnimationActive { get; private set; }
 
@@ -37,28 +32,16 @@ public class CardHand : MonoBehaviour
 
     public void PressChangeCards()
     {
-        if (_isChangeCardAnimationActive || IsOpenAnimationActive)
+        if (_cardsToChange.Count != 0)
             return;
 
         StartChangeCards();
     }
 
-    public void StartChangeNextCard()
-    {
-        if (_changeCardIndex >= _cards.Count)
-        {
-            _isChangeCardAnimationActive = false;
-            return;
-        }
-
-        int cardValueNumber = Random.Range(0, (int)Card.ValueType.ValueTypeCount);
-        int cardValue = Random.Range(-2, 10);
-        _cards[_changeCardIndex++].SetValueWithAnimation((Card.ValueType)cardValueNumber, cardValue);
-    }
-
-    private void Start()
+    private void Awake()
     {
         _cards = new List<Card>();
+        _cardsToChange = new List<Card>();
         GetComponent<CardCreator>().CreateCards();
         StartCoroutine(OpenCards());
     }
@@ -78,7 +61,7 @@ public class CardHand : MonoBehaviour
                 positionFactor = time/_openAnimationTime;
 
             for (int i = 0; i < _cards.Count; i++)
-                SetArcPosition(1 + (_cards.Count - 1) * positionFactor, i * positionFactor, _cards[i].transform);
+                _cardPositionPattern.SetPosition(1 + (_cards.Count - 1) * positionFactor, i * positionFactor, _cards[i].transform);
 
             yield return null;
         }
@@ -86,28 +69,30 @@ public class CardHand : MonoBehaviour
         IsOpenAnimationActive = false;
     }
 
-    private void SetArcPosition(float cardCount, float cardNumber, Transform cardTransform)
-    {
-        float width = _cardWidth + _distanceBetweenCards;
-        float x = -width * (0.5f * (cardCount - 1) - cardNumber);
-        float positionFactor = (cardCount - 1) * 0.5f - cardNumber;
-        float y = _cardsMaxHeight - positionFactor * positionFactor * _cardArcHeightStep;
-        float angle = positionFactor * _cardArcAngleStep;
-
-        cardTransform.localPosition = new Vector3(x, y, 0);
-        cardTransform.rotation = Quaternion.Euler(0, 0, angle);
-    }
-
     private void StartChangeCards()
     {
-        _isChangeCardAnimationActive = true;
-        _changeCardIndex = 0;
+        _cardsToChange = new List<Card>(_cards);
         StartChangeNextCard();
+    }
+
+    private void ClearAndStartChangeNextCard()
+    {
+        _cardsToChange.RemoveAt(0);
+        StartChangeNextCard();
+    }
+
+    private void StartChangeNextCard()
+    {
+        if (_cardsToChange.Count == 0)
+            return;
+
+        _cardsToChange[0].OnValueChangeAnimationFinish += ClearAndStartChangeNextCard;
+        _cardsToChange[0].SetRandomValueWithAnimation();
     }
 
     private void UpdateCardsPositions()
     {
         for (int i = 0; i < _cards.Count; i++)
-            SetArcPosition(_cards.Count, i, _cards[i].transform);
+            _cardPositionPattern.SetPosition(_cards.Count, i, _cards[i].transform);
     }
 }

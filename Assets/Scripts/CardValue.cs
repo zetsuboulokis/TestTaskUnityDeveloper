@@ -7,7 +7,7 @@ public class CardValue : MonoBehaviour
     [SerializeField]
     private Text _text;
     private int _value;
-    private float _changeValueTimeStep = 0.2f;
+    private float _counterAnimationTimeStep = 0.2f;
 
     public void Set(int value)
     {
@@ -34,9 +34,9 @@ public class CardValue : MonoBehaviour
             textValue += (int) Mathf.Sign(_value - textValue);
             _text.text = textValue.ToString();
 
-            yield return new WaitForSeconds(_changeValueTimeStep);
+            yield return new WaitForSeconds(_counterAnimationTimeStep);
         }
 
-        FindObjectOfType<CardHand>().StartChangeNextCard();
+        GetComponentInParent<Card>().InvokeOnValueChangeAnimationFinish();
     }
 }

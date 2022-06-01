@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -6,6 +7,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasGroup))]
 public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
 {
+    public event Action OnValueChangeAnimationFinish;
+    
     [SerializeField]
     private RawImage _art;
     [SerializeField]
@@ -23,6 +26,8 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
     private Animator _animator;
     private Vector3 _positionPreDrag;
 
+    private string _imageURL = "https://picsum.photos/70/60";
+
     public enum ValueType
     {
         Attack,
@@ -31,6 +36,8 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
 
         ValueTypeCount
     }
+
+    public static int GetValueCount => (int)ValueType.ValueTypeCount;
 
     public void Init()
     {
@@ -52,6 +59,23 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
         _cardValues[(int)valueType].SetWithAnimation(value);
     }
 
+    public void SetRandomValueWithAnimation()
+    {
+        int cardValueNumber = UnityEngine.Random.Range(0, (int)ValueType.ValueTypeCount);
+        int cardValue = UnityEngine.Random.Range(-2, 10);
+
+        SetValueWithAnimation((ValueType)cardValueNumber, cardValue);
+    }
+
+    public void InvokeOnValueChangeAnimationFinish()
+    {
+        if (OnValueChangeAnimationFinish == null)
+            return;
+
+        OnValueChangeAnimationFinish.Invoke();
+        OnValueChangeAnimationFinish = null;
+    }
+
     public void OnDrag(PointerEventData eventData)
     {
         _rectTransform.anchoredPosition += eventData.delta / _canvas.scaleFactor;
@@ -71,7 +95,7 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
         _animator.SetInteger("State", 2);
 
         var go = eventData.pointerCurrentRaycast.gameObject;
-        if (go != null && go.tag == "Board")
+        if (go?.tag == "Board")
         {
             transform.parent.GetComponent<CardHand>().RemoveCard(this);
             return;
@@ -83,6 +107,6 @@ public class Card : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUp
 
     private void LoadArt()
     {
-        StartCoroutine(Utils.Dowloader.LoadImage("https://picsum.photos/70/60", _art));
+        StartCoroutine(Utils.Dowloader.LoadImage(_imageURL, _art));
     }
 }
