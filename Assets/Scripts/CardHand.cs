@@ -10,7 +10,7 @@ public class CardHand : MonoBehaviour
 
     private float _openAnimationTime = 1;
 
-    private ICardPositionPattern _cardPositionPattern = new CardPositionArc();
+    private ICardPositionPattern _cardPositionPattern = new CardPositionPatternArc();
 
     public bool IsOpenAnimationActive { get; private set; }
 

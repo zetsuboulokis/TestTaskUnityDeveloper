@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CardPositionArc : ICardPositionPattern
+public class CardPositionPatternArc : ICardPositionPattern
 {
     private float _cardWidth = 80;
     private float _cardsMaxHeight = 140;
